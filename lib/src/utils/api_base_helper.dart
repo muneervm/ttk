@@ -79,9 +79,7 @@ class ApiBaseHelper {
   Future<dynamic> postMultipart(String url,
       {Map<String, String>? body,
       Map<String, String>? headers,
-      String file = '',
-      String file1 = '',
-      String file2 = ''}) async {
+      Map<String, String> files = const {}}) async {
     dynamic responseJson;
     try {
       var uri = Uri.parse(_baseUrl + url);
@@ -93,21 +91,18 @@ class ApiBaseHelper {
       if (body != null) {
         request.fields.addAll(body);
       }
-      if (file.isNotEmpty) {
-        request.files.add(await http.MultipartFile.fromPath("file", file));
-      }
-      if (file1.isNotEmpty) {
-        request.files.add(await http.MultipartFile.fromPath("file1", file1));
-      }
-      if (file2.isNotEmpty) {
-        request.files.add(await http.MultipartFile.fromPath("file2", file2));
+      for (final entry in files.entries) {
+        if (entry.value.isNotEmpty) {
+          request.files
+              .add(await http.MultipartFile.fromPath(entry.key, entry.value));
+        }
       }
       var streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
+      print("=== postMultipart response ===");
       print(response.statusCode);
       print(response.body);
       responseJson = _returnResponse(response);
-
     } on SocketException {
       throw FetchDataException('No Internet connection');
     }

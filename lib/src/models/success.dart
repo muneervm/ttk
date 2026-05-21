@@ -5,7 +5,7 @@ class PostResponse {
   PostResponse({this.status = false, this.message});
 
   PostResponse.fromJson(Map<String, dynamic> json) {
-    status = json['status']=="success" || json['success'] == true;
+    status = json['status'] == "success" || json['success'] == true;
     message = json['message'];
   }
 

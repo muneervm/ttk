@@ -61,21 +61,15 @@ class HospitalRepository {
     return PositionResponse.fromJson(response);
   }
 
-  Future<PostResponse> saveOrder(
-    Map<String, String> data, {
-    String file = '',
-    String? file1 = '',
-    String? file2 = '',
-  }) async {
+  Future<PostResponse> saveOrder(Map<String, String> data) async {
     String token = await AuthRepository().getAccessToken();
     var headers = {'Authorization': token};
-    final response = await _api.postMultipart(ApiConstants.order,
-        headers: headers,
-        body: data,
-        file: file,
-        file1: file1 ?? '',
-        file2: file2 ?? '');
-
+    // Backend reads data as standard JSON POST body (same as Postman raw JSON)
+    final response = await _api.post(
+      ApiConstants.order,
+      headers: headers,
+      body: data,
+    );
     return PostResponse.fromJson(response);
   }
 

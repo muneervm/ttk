@@ -14,8 +14,7 @@ class UserProfileRepository {
     String mobile = await _preferences.getUserMobile();
     String type = await _preferences.getUserImage();
     String email = await _preferences.getUserMail();
-    return User(
-        id: id, name: name, mobile: mobile, email: email,type: type);
+    return User(id: id, name: name, mobile: mobile, email: email, type: type);
   }
 
   Future<void> saveUser(User user) async {
@@ -40,7 +39,7 @@ class UserProfileRepository {
     final dynamic response;
     if (image.isNotEmpty) {
       response = await _api.postMultipart(ApiConstants.user,
-          headers: headers, body: body, file: image);
+          headers: headers, body: body, files: {'file': image});
     } else {
       response =
           await _api.post(ApiConstants.user, headers: headers, body: body);
@@ -48,7 +47,7 @@ class UserProfileRepository {
     return UserResponse.fromJson(response);
   }
 
-  void logout()async{
+  void logout() async {
     await _preferences.clear();
   }
 }

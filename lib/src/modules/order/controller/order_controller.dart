@@ -57,21 +57,20 @@ class OrderController extends GetxController {
   late final textControllerPatientPhone = TextEditingController();
   late final textControllerPatientAltPhone = TextEditingController();
 
-
   // ttk valve fields
   late final textControllerValveSerialNo = TextEditingController();
   late final textControllerValveBatchNo = TextEditingController();
   final valveDateOfMfg = ''.obs;
   final valveDateOfExp = ''.obs;
   final selectedTtkValveType = ''.obs;
-  final tTtkValveTypes =  <String>[].obs;
+  final tTtkValveTypes = <String>[].obs;
 
-  final _hospitalRepository =  HospitalRepository();
+  final _hospitalRepository = HospitalRepository();
 
   late final textControllerValveDetail = TextEditingController();
 
-  bool get isValveTwo => (selectedValveType.value=="dual" && selectedValveOne.value == null);
-
+  bool get isValveTwo =>
+      (selectedValveType.value == "dual" && selectedValveOne.value == null);
 
   var isEdit = false.obs;
   var currentValveNumber = 1.obs;
@@ -79,103 +78,105 @@ class OrderController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    tTtkValveTypes(["Aortic","Mitral"]);
+    tTtkValveTypes(["Aortic", "Mitral"]);
     getHospitals();
     getSurgeons();
     getPositions();
   }
 
-  void getHospitals() async{
-   final response = await _hospitalRepository.getHospitals();
-   if(response.success){
-     hospitals(response.hospitals);
-   }
+  void getHospitals() async {
+    final response = await _hospitalRepository.getHospitals();
+    if (response.success) {
+      hospitals(response.hospitals);
+    }
   }
 
-  void getSurgeons() async{
+  void getSurgeons() async {
     final response = await _hospitalRepository.getSurgeons();
-    if(response.success){
+    if (response.success) {
       surgeons(response.surgeons);
     }
   }
 
-  void getPositions() async{
+  void getPositions() async {
     final response = await _hospitalRepository.getValvePositions();
-    if(response.success){
+    if (response.success) {
       valvePositions(response.positions);
     }
   }
-
 
   void gotoLoginPage() {
     Get.offAllNamed(LoginPage.routeName);
   }
 
   void storeHospitalsAndGotoNextPage() {
-    if(selectedHospital.value.hospital.isEmpty){
+    if (selectedHospital.value.hospital.isEmpty) {
       AppDialog.showSnackBar("Invalid Hospital", "Please select a hospital");
-    }else if(selectedSurgeon.value.name.isEmpty){
+    } else if (selectedSurgeon.value.name.isEmpty) {
       AppDialog.showSnackBar("Invalid Surgeon", "Please select a surgeon");
-    }else if(surgeryDate.isEmpty){
-      AppDialog.showSnackBar("Invalid Surgery Date", "Please select a surgery date");
-    }else{
-      if(isEdit.isTrue){
+    } else if (surgeryDate.isEmpty) {
+      AppDialog.showSnackBar(
+          "Invalid Surgery Date", "Please select a surgery date");
+    } else {
+      if (isEdit.isTrue) {
         isEdit(false);
         Get.back();
-      }else{
+      } else {
         Get.toNamed(PatientDetailEnterPage.routeName);
       }
     }
   }
 
   void storePatientAndGotoNextPage() {
-    if(textControllerPatientName.text.isEmpty){
-      AppDialog.showSnackBar("Invalid Patient Name", "Please enter a valid name");
-    }/*else if(patientDob.isEmpty){
+    if (textControllerPatientName.text.isEmpty) {
+      AppDialog.showSnackBar(
+          "Invalid Patient Name", "Please enter a valid name");
+    } /*else if(patientDob.isEmpty){
       AppDialog.showSnackBar("Invalid Date of birth", "Please select a date of birth");
-    }*//*else if(textControllerPatientAge.text.isEmpty){
+    }*/ /*else if(textControllerPatientAge.text.isEmpty){
       AppDialog.showSnackBar("Invalid Age", "Please enter a valid age");
-    }*/else if(textControllerPatientAddress.text.isEmpty){
+    }*/
+    else if (textControllerPatientAddress.text.isEmpty) {
       AppDialog.showSnackBar("Invalid Address", "Please enter a valid address");
-    }else if(textControllerPatientPhone.text.isEmpty) {
+    } else if (textControllerPatientPhone.text.isEmpty) {
       AppDialog.showSnackBar(
           "Invalid Mobile Number", "Please enter a valid mobile number");
-    }else if(textControllerPatientAltPhone.text.isEmpty) {
+    } else if (textControllerPatientAltPhone.text.isEmpty) {
       AppDialog.showSnackBar(
           "Invalid Alternate Number", "Please enter a valid alternate number");
-    }/*else if(patientImage.isEmpty) {
+    } /*else if(patientImage.isEmpty) {
       AppDialog.showSnackBar(
           "Invalid Image", "Please upload patient image");
-    }*/else{
+    }*/
+    else {
       busy(true);
       busy(false);
-      if(isEdit.isTrue){
+      if (isEdit.isTrue) {
         isEdit(false);
         Get.back();
-      }else{
+      } else {
         Get.toNamed(ValveTypeEnterPage.routeName);
       }
-
     }
-
   }
 
   void storeValveTypeAndGotoNextPage() {
     if (selectedValveType.value.isEmpty) {
-      Get.showSnackbar(const GetSnackBar(title: "Valve type not selected",
+      Get.showSnackbar(const GetSnackBar(
+        title: "Valve type not selected",
         message: "Please select a valve type to continue!",
-        duration: Duration(seconds: 3),));
+        duration: Duration(seconds: 3),
+      ));
     } else {
-     /* if(selectedValveType.value=="dual"){
+      /* if(selectedValveType.value=="dual"){
       Get.toNamed(ValveManufacturerEnterPage.routeName);
       }else{*/
       currentValveNumber(1);
-      if(selectedValveOne.value!=null){
+      if (selectedValveOne.value != null) {
         fillForm(selectedValveOne.value!);
       }
-        Get.toNamed(ValveTtkDetailEnterPage.routeName);
-     // }
-
+      Get.toNamed(ValveTtkDetailEnterPage.routeName);
+      // }
     }
   }
 
@@ -184,14 +185,14 @@ class OrderController extends GetxController {
       Get.showSnackbar(const GetSnackBar(
         title: "Valve Manufacturer not selected",
         message: "Please select a valve Manufacturer to continue!",
-        duration: Duration(seconds: 3),));
+        duration: Duration(seconds: 3),
+      ));
     } else {
       if (selectedValveManufacturer.value == "other") {
         Get.toNamed(ValveOtherDetailEnterPage.routeName);
-      }
-      else {
+      } else {
         currentValveNumber(2);
-        if(selectedValveTwo.value!=null){
+        if (selectedValveTwo.value != null) {
           fillForm(selectedValveTwo.value!);
         }
         Get.toNamed(ValveTtkDetailEnterPage.routeName);
@@ -208,25 +209,29 @@ class OrderController extends GetxController {
   }
 
   void submit() {
-
-    if(selectedValveManufacturer.value =="other"){
-      if(textControllerValveDetail.text.isEmpty){
-        AppDialog.showSnackBar("Invalid detail", "Please enter valid valve details");
-      }else{
+    if (selectedValveManufacturer.value == "other") {
+      if (textControllerValveDetail.text.isEmpty) {
+        AppDialog.showSnackBar(
+            "Invalid detail", "Please enter valid valve details");
+      } else {
         gotoSummary();
       }
-    }else{
-      if(_validateTtkValve()){
-        Valve valve = Valve(position: selectedValvePosition.value!,
-            serialNo: qr.value.isNotEmpty ? qr.value.trim().toString() : textControllerValveSerialNo.text,
-        batchNo: textControllerValveBatchNo.text,
-        mfgDate: valveDateOfMfg.value,
-        expDate: valveDateOfExp.value,
-        valveType: selectedTtkValveType.value,
-        image: selectedValveImage.value);
-        if(currentValveNumber.value == 1){ //selectedValveType.value=="single"
+    } else {
+      if (_validateTtkValve()) {
+        Valve valve = Valve(
+            position: selectedValvePosition.value!,
+            serialNo: qr.value.isNotEmpty
+                ? qr.value.trim().toString()
+                : textControllerValveSerialNo.text,
+            batchNo: textControllerValveBatchNo.text,
+            mfgDate: valveDateOfMfg.value,
+            expDate: valveDateOfExp.value,
+            valveType: selectedTtkValveType.value,
+            image: selectedValveImage.value);
+        if (currentValveNumber.value == 1) {
+          //selectedValveType.value=="single"
           selectedValveOne(valve);
-        }else{
+        } else {
           selectedValveTwo(valve);
           /*if(selectedValveOne.value == null){
             selectedValveOne(valve);
@@ -235,44 +240,49 @@ class OrderController extends GetxController {
           }*/
         }
 
-        if(selectedValveType.value=="dual" && selectedValveTwo.value==null){
+        if (selectedValveType.value == "dual" &&
+            selectedValveTwo.value == null) {
           _clearForm();
           Get.toNamed(ValveManufacturerEnterPage.routeName);
-        }else{
+        } else {
           gotoSummary();
         }
       }
     }
   }
 
-  bool _validateTtkValve(){
-    if(textControllerValveSerialNo.text.isEmpty){
-      AppDialog.showSnackBar("Invalid Serial No", "Please enter valid serial no");
+  bool _validateTtkValve() {
+    if (textControllerValveSerialNo.text.isEmpty) {
+      AppDialog.showSnackBar(
+          "Invalid Serial No", "Please enter valid serial no");
       return false;
-    }else if(textControllerValveBatchNo.text.isEmpty){
+    } else if (textControllerValveBatchNo.text.isEmpty) {
       AppDialog.showSnackBar("Invalid Batch No", "Please enter valid batch no");
       return false;
-    }/*else if(valveDateOfMfg.isEmpty){
+    } /*else if(valveDateOfMfg.isEmpty){
       AppDialog.showSnackBar("Invalid Manufacturing date", "Please enter valid manufacturing date");
       return false;
     }else if(valveDateOfExp.isEmpty){
       AppDialog.showSnackBar("Invalid Expiry date", "Please enter valid expiry date");
       return false;
-    }*//*else if(selectedValveImage.isEmpty){
+    }*/ /*else if(selectedValveImage.isEmpty){
       AppDialog.showSnackBar("Invalid Image", "Please upload valve image");
       return false;
-    }*/else if(selectedValvePosition.value == null){
-      AppDialog.showSnackBar("Invalid Position", "Please select a valve position");
+    }*/
+    else if (selectedValvePosition.value == null) {
+      AppDialog.showSnackBar(
+          "Invalid Position", "Please select a valve position");
       return false;
-    }else if(selectedTtkValveType.value.isEmpty){
-      AppDialog.showSnackBar("Invalid Valve Type", "Please select a valve type");
+    } else if (selectedTtkValveType.value.isEmpty) {
+      AppDialog.showSnackBar(
+          "Invalid Valve Type", "Please select a valve type");
       return false;
-    }else{
+    } else {
       return true;
     }
   }
 
-  void _clearForm(){
+  void _clearForm() {
     textControllerValveSerialNo.clear();
     textControllerValveBatchNo.clear();
     valveDateOfMfg('');
@@ -283,7 +293,7 @@ class OrderController extends GetxController {
     selectedValvePosition(null);
   }
 
-  void fillForm(Valve valve){
+  void fillForm(Valve valve) {
     textControllerValveSerialNo.text = valve.serialNo;
     textControllerValveBatchNo.text = valve.batchNo;
     valveDateOfMfg(valve.mfgDate);
@@ -293,76 +303,115 @@ class OrderController extends GetxController {
     selectedValvePosition(valve.position);
   }
 
-  void gotoSummary(){
+  void gotoSummary() {
     Get.toNamed(SummaryPage.routeName);
   }
 
-  void submitOrder()async{
+  void submitOrder() async {
     busy(true);
-    try{
+    try {
+      final String valveType = selectedValveType.value; // "single" or "dual"
+      // For single valve, manufacturer defaults to "ttk" unless otherwise set
+      final String type = selectedValveManufacturer.value.isNotEmpty
+          ? selectedValveManufacturer.value
+          : "ttk";
 
+      // Base fields common to all cases
       Map<String, String> data = {
-        "name":textControllerPatientName.text,
-        "dob":patientDob.value,
-        "age":textControllerPatientAge.text,
-        "address":textControllerPatientAddress.text,
-        "contact":textControllerPatientPhone.text,
-        "number":textControllerPatientAltPhone.text,
-        "hospital":selectedHospital.value.hospital,
-        "hospital_id":selectedHospital.value.id.toString(),
-        "surgeon":selectedSurgeon.value.name,
-        "surgeon_id":selectedSurgeon.value.id.toString(),
-        "date_of_surgeory":surgeryDate.value,
-        "valve_type":selectedValveType.value,
-        "details":textControllerValveDetail.text,
-        "serial_no1":selectedValveOne.value!.serialNo,
-        "batch_number1":selectedValveOne.value!.batchNo,
-        "date_mfg1":selectedValveOne.value!.mfgDate,
-        "date_exp1":selectedValveOne.value!.expDate,
-        "valve_position1":selectedValveOne.value!.position.position,
-        "valve_position1_id":selectedValveOne.value!.position.id.toString(),
-        "vtype1":selectedValveOne.value!.valveType,
-        "type":selectedValveManufacturer.value
+        "hospital": selectedHospital.value.hospital,
+        "surgeon": selectedSurgeon.value.name,
+        "date_of_surgeory": surgeryDate.value,
+
+        "name": textControllerPatientName.text,
+        "dob": patientDob.value,
+        "age": textControllerPatientAge.text,
+        "address": textControllerPatientAddress.text,
+        "contact": textControllerPatientPhone.text,
+        "number": textControllerPatientAltPhone.text,
+        "file": "",
+
+        "valve_type": valveType,
+        "type": type,
       };
 
+      if (valveType == "single") {
+        // Single valve — always TTK
+        final v1 = selectedValveOne.value;
+        data.addAll({
+          "serial_no1": v1?.serialNo ?? "",
+          "batch_number": v1?.batchNo ?? "",
+          "date_mfg": v1?.mfgDate ?? "",
+          "date_exp": v1?.expDate ?? "",
+          "valve_position": v1?.position.position ?? "",
+          "valve_type_name": v1?.valveType ?? "",
+          "valve_file": "",
+        });
+      } else {
+        // Dual valve
+        final v1 = selectedValveOne.value;
 
+        if (type == "ttk") {
+          // Dual TTK — both valves have full details
+          final v2 = selectedValveTwo.value;
+          data.addAll({
+            "serial_no_dual1": v1?.serialNo ?? "",
+            "batch_number_dual1": v1?.batchNo ?? "",
+            "date_mfg_dual1": v1?.mfgDate ?? "",
+            "date_exp_dual1": v1?.expDate ?? "",
+            "valve_position_dual1": v1?.position.position ?? "",
+            "valve_type_name_dual1": v1?.valveType ?? "",
+            "valve_file_dual1": "",
 
-      if(selectedValveType.value=="dual" && selectedValveTwo.value!=null){
-        var v2 = {
-          "serial_no2":selectedValveTwo.value!.serialNo,
-          "batch_number2":selectedValveTwo.value!.batchNo,
-          "date_mfg2":selectedValveTwo.value!.mfgDate,
-          "date_exp2":selectedValveTwo.value!.expDate,
-          "valve_position2":selectedValveTwo.value!.position.position,
-          "valve_position2_id":selectedValveTwo.value!.position.id.toString(),
-          "vtype2":selectedValveTwo.value!.valveType,
-        };
-
-        data.addAll(v2);
+            "serial_no_dual2": v2?.serialNo ?? "",
+            "batch_number_dual2": v2?.batchNo ?? "",
+            "date_mfg_dual2": v2?.mfgDate ?? "",
+            "date_exp_dual2": v2?.expDate ?? "",
+            "valve_position_dual2": v2?.position.position ?? "",
+            "valve_type_name_dual2": v2?.valveType ?? "",
+            "valve_file_dual2": "",
+          });
+        } else {
+          // Dual Other — first valve details + free-text details for second valve
+          data.addAll({
+            "serial_no_dual1": v1?.serialNo ?? "",
+            "batch_number_dual1": v1?.batchNo ?? "",
+            "date_mfg_dual1": v1?.mfgDate ?? "",
+            "date_exp_dual1": v1?.expDate ?? "",
+            "valve_position_dual1": v1?.position.position ?? "",
+            "valve_type_name_dual1": v1?.valveType ?? "",
+            "valve_file_dual1": "",
+            "details": textControllerValveDetail.text,
+          });
+        }
       }
+
+      print("=== submitOrder payload ===");
       print(data);
-      final response = await _hospitalRepository.saveOrder(data,file: patientImage.value,file1:selectedValveOne.value?.image, file2: selectedValveTwo.value?.image);
-      if(response.status){
-        Get.showSnackbar(const GetSnackBar(title: "Success",
-          message: "Submitted successfully",
-          duration: Duration(seconds: 3),));
-        Get.offAllNamed(LandingPage.routeName);
-      }else{
-        AppDialog.showSnackBar("Failed", response.message ?? "Something went wrong! try again.");
-      }
 
-    }catch(_){
-      print(_.toString());
+      final response = await _hospitalRepository.saveOrder(data);
+
+      if (response.status) {
+        Get.showSnackbar(const GetSnackBar(
+          title: "Success",
+          message: "Submitted successfully",
+          duration: Duration(seconds: 3),
+        ));
+        Get.offAllNamed(LandingPage.routeName);
+      } else {
+        AppDialog.showSnackBar(
+            "Failed", response.message ?? "Something went wrong! try again.");
+      }
+    } catch (e) {
+      print("submitOrder error: ${e.toString()}");
       AppDialog.showSnackBar("Failed", "Something went wrong! try again.");
-    }
-    finally{
+    } finally {
       busy(false);
     }
   }
 
   void pickFromCamera() async {
     XFile? image =
-    await _picker.pickImage(source: ImageSource.camera, imageQuality: 60);
+        await _picker.pickImage(source: ImageSource.camera, imageQuality: 60);
 
     if (image == null) return;
 
@@ -375,8 +424,8 @@ class OrderController extends GetxController {
   }
 
   void pickFromGallery() async {
-    FilePickerResult? result = await FilePicker.pickFiles(
-        allowMultiple: true, type: FileType.image);
+    FilePickerResult? result =
+        await FilePicker.pickFiles(allowMultiple: true, type: FileType.image);
 
     if (result != null) {
       List<File> files = result.paths.map((path) => File(path!)).toList();
@@ -412,21 +461,20 @@ class OrderController extends GetxController {
     }
   }
 
-
-  void showAddNewSurgeonSheet(){
+  void showAddNewSurgeonSheet() {
     Get.bottomSheet(AddSurgeonSheet());
   }
 
-  void showAddNewHospitalSheet(){
+  void showAddNewHospitalSheet() {
     Get.bottomSheet(AddHospitalSheet());
   }
 
-  void clearValveDetailsOnPop(){
+  void clearValveDetailsOnPop() {
     print(selectedValveTwo.value?.serialNo);
-    if(selectedValveTwo.value !=null){
+    if (selectedValveTwo.value != null) {
       print('cleared two');
       selectedValveTwo = Rxn<Valve>();
-    }else{
+    } else {
       print('cleared one');
       selectedValveOne = Rxn<Valve>();
     }
