@@ -95,6 +95,24 @@ class AppDialog {
       margin: const EdgeInsets.all(0),
       colorText: AppColors.snackBarText,
       borderRadius: 0.0,
+      duration: const Duration(seconds: 3),
+      titleText: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: AppColors.snackBarText,
+          fontWeight: FontWeight.w700,
+          fontSize: 16,
+        ),
+      ),
+      messageText: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: AppColors.snackBarText,
+          fontSize: 14,
+        ),
+      ),
     );
   }
 }

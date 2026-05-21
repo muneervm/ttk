@@ -390,12 +390,11 @@ class OrderController extends GetxController {
       final response = await _hospitalRepository.saveOrder(data);
 
       if (response.status) {
-        Get.showSnackbar(const GetSnackBar(
-          title: "Success",
-          message: "Submitted successfully",
-          duration: Duration(seconds: 3),
-        ));
-        Get.offAllNamed(LandingPage.routeName);
+        busy(false);
+        AppDialog.showSnackBar("Success", "Submitted successfully");
+        Future.delayed(const Duration(seconds: 2), () {
+          Get.offAllNamed(LandingPage.routeName);
+        });
       } else {
         AppDialog.showSnackBar(
             "Failed", response.message ?? "Something went wrong! try again.");
