@@ -260,7 +260,7 @@ class AppColors {
   static const dialogNegativeButton = blackShade;
   static const dialogTitle = text;
   static const dialogContent = blackShade;
-  static const snackBarBackground = text;
+  static const snackBarBackground = primary;
   static const snackBarText = white;
   static const otpInputBackground = white;
   static const numPadBackground = white;
